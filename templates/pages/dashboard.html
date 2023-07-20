@@ -1,0 +1,631 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block content %}
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+    #chart-container {
+        position: relative;
+    }
+
+    .tooltip {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 6px;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        font-size: 12px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+    .tooltip.visible {
+        opacity: 1;
+    }
+         
+</style>
+<div class="content">
+    <div class="row">
+      <div class="card card-chart">
+        <div class="card-header">
+          <h3 class="card-title">Data Visualization   <i class="tim-icons icon-chart-bar-32 text-primary"></i></h3>
+          <h5 class="card-category">Following is the graphical representation of few attributes:</h5>
+        </div>
+    </div>
+</div>
+    {% comment %} line chart is here {% endcomment %}
+
+    <div class="content">
+        {% comment %} <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-chart">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-sm-6 text-left">
+                                <h5 class="card-category">Total Shipments</h5>
+                                <h2 class="card-title">Performance</h2>
+                            </div>
+                            <div class="col-sm-6"></div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                        <svg id="yearChart"></svg> {% endcomment %}
+
+                        {% comment %} <script>
+                          // Fetch data from Django backend
+                          fetch('/api/year/')
+                            .then(response => response.json())
+                            .then(data => {
+                              // Process data and create the chart
+                              console.log(data);
+                              createLineGraph(data);
+                            })
+                            .catch(error => console.log(error));
+                          
+                          // Function to create the line graph
+                          function createLineGraph(data) {
+                            // Define chart dimensions and margins
+                            const width = 800;
+                            const height = 300;
+                            const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+                            
+                            // Create the chart SVG element
+                            const svg = d3.select("#yearChart")
+                              .attr("width", width)
+                              .attr("height", height);
+                          
+                            // Define x-scale and y-scale
+                            const xScale = d3.scaleBand()
+                              .domain(data.map(d => d.end_year))
+                              .range([margin.left, width - margin.right])
+                              .padding(0.1);
+                          
+                            const yScale = d3.scaleLinear()
+                              .domain([0, d3.max(data, d => d.total)])
+                              .range([height - margin.bottom, margin.top]);
+                          
+                            // Create the line
+                            const line = d3.line()
+                              .x(d => xScale(d.end_year) + xScale.bandwidth() / 2)
+                              .y(d => yScale(d.total));
+                          
+                            // Draw the line
+                            svg.append("path")
+                              .datum(data)
+                              .attr("fill", "none")
+                              .attr("stroke", "steelblue")
+                              .attr("stroke-width", 2)
+                              .attr("d", line);
+                          
+                            // Create x-axis
+                            const xAxis = d3.axisBottom(xScale);
+                            svg.append("g")
+                              .attr("transform", `translate(0, ${height - margin.bottom})`)
+                              .call(xAxis);
+                          
+                            // Create y-axis
+                            const yAxis = d3.axisLeft(yScale);
+                            svg.append("g")
+                              .attr("transform", `translate(${margin.left}, 0)`)
+                              .call(yAxis);
+                          
+                            // Create y-axis label
+                            svg.append("text")
+                              .attr("transform", "rotate(-90)")
+                              .attr("x", -(height / 2))
+                              .attr("y", margin.left - 45)
+                              .attr("dy", "1em")
+                              .style("text-anchor", "middle")
+                              .text("Total");
+                          
+                            // Create x-axis label
+                            svg.append("text")
+                              .attr("x", width / 2)
+                              .attr("y", height - margin.bottom + 20)
+                              .attr("dy", "1em")
+                              .style("text-anchor", "middle")
+                              .text("Year");
+                          
+                            // Create tooltip
+                            const tooltip = d3.select("body")
+                              .append("div")
+                              .attr("class", "tooltip")
+                              .style("opacity", 0);
+                          
+                            // Add event listener for data points
+                            svg.selectAll(".data-point")
+                              .data(data)
+                              .enter()
+                              .append("circle")
+                              .attr("class", "data-point")
+                              .attr("cx", d => xScale(d.end_year) + xScale.bandwidth() / 2)
+                              .attr("cy", d => yScale(d.total))
+                              .attr("r", 5)
+                              .attr("fill", "steelblue")
+                              .on("mouseover", (event, d) => {
+                                tooltip.transition()
+                                  .duration(200)
+                                  .style("opacity", 0.9);
+                                tooltip.html(`Total: ${d.total}`)
+                                  .style("left", event.pageX + "px")
+                                  .style("top", (event.pageY - 28) + "px");
+                              })
+                              .on("mouseout", () => {
+                                tooltip.transition()
+                                  .duration(200)    
+                                  .style("opacity", 0);
+                              });
+                          }
+                          </script> {% endcomment %}
+                        {% comment %} </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     {% endcomment %}
+        <div class="row">
+        <div class="col-lg-4">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <h5 class="card-category">Likelihood</h5>
+                    <h3 class="card-title"><i class="tim-icons icon-double-right text-primary"></i> 5</h3>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <svg id="likelihoodChart"></svg>
+                                            
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <h5 class="card-category">Intensity</h5>
+                    <h3 class="card-title"><i class="tim-icons icon-double-right text-info"></i>24</h3>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <svg id="chart"></svg>
+
+            <script>
+                // Fetch data from Django backend
+                fetch('/api/intensity/')
+                .then(response => response.json())
+                .then(data => {
+                    // Process data and create the chart
+                    console.log(data);
+                    createLineGraph(data);
+                })
+                .catch(error => console.log(error));
+
+                // Function to create the line graph
+                function createLineGraph(data) {
+                // Define chart dimensions and margins
+                const width = 340;
+                const height = 220;
+                const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+                
+                // Create the chart SVG element
+                const svg = d3.select("#chart")
+                    .attr("width", width)
+                    .attr("height", height);
+
+                // Define x-scale and y-scale
+                const xScale = d3.scaleBand()
+                    .domain(data.map(d => d.intensity))
+                    .range([margin.left, width - margin.right])
+                    .padding(0.1);
+
+                const yScale = d3.scaleLinear()
+                    .domain([0, d3.max(data, d => d.total)])
+                    .range([height - margin.bottom, margin.top]);
+
+                // Create the line
+                const line = d3.line()
+                    .x(d => xScale(d.intensity) + xScale.bandwidth() / 2)
+                    .y(d => yScale(d.total));
+
+                // Draw the line
+                svg.append("path")
+                    .datum(data)
+                    .attr("fill", "none")
+                    .attr("stroke", "steelblue")
+                    .attr("stroke-width", 2)
+                    .attr("d", line);
+
+                // Create x-axis
+                const xAxis = d3.axisBottom(xScale);
+                svg.append("g")
+                    .attr("transform", `translate(0, ${height - margin.bottom})`)
+                    .call(xAxis);
+
+                // Create y-axis
+                const yAxis = d3.axisLeft(yScale);
+                svg.append("g")
+                    .attr("transform", `translate(${margin.left}, 0)`)
+                    .call(yAxis);
+
+                // Create y-axis label
+                svg.append("text")
+                    .attr("transform", "rotate(-90)")
+                    .attr("x", -(height / 2))
+                    .attr("y", margin.left - 45)
+                    .attr("dy", "1em")
+                    .style("text-anchor", "middle")
+                    .style("fill", "white")
+                    .text("Total");
+
+                // Create x-axis label
+                svg.append("text")
+                    .attr("x", width / 2)
+                    .attr("y", height - margin.bottom + 20)
+                    .attr("dy", "1em")
+                    .style("text-anchor", "middle")
+                    .style("fill", "white")
+                    .text("Intensity");
+
+                // Create tooltip
+                const tooltip = d3.select("body")
+                    .append("div")
+                    .attr("class", "tooltip")
+                    .style("opacity", 0);
+
+                // Add event listener for data points
+                svg.selectAll(".data-point")
+                    .data(data)
+                    .enter()
+                    .append("circle")
+                    .attr("class", "data-point")
+                    .attr("cx", d => xScale(d.intensity) + xScale.bandwidth() / 2)
+                    .attr("cy", d => yScale(d.total))
+                    .attr("r", 5)
+                    .attr("fill", "steelblue")
+                    .on("mouseover", (event, d) => {
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", 0.9);
+                    tooltip.html(`Total: ${d.total}`)
+                        .style("left", event.pageX + "px")
+                        .style("top", (event.pageY - 28) + "px");
+                    })
+                    .on("mouseout", () => {
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", 0);
+                    });
+                }
+                </script>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <h5 class="card-category">Relevance</h5>
+                    <h3 class="card-title"><i class="tim-icons icon-double-right text-primary"></i>8</h3>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <svg id="chart1"></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-3">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <h5 class="card-category">Country</h5>
+                    <h3 class="card-title"><i class="tim-icons icon-double-right text-info"></i> 57</h3>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <div id="chart-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <h5 class="card-category">Region</h5>
+                    <h3 class="card-title"><i class="tim-icons icon-double-right text-info"></i>24</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="chart-area">
+                                <div id="chart-container-region"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div id="legend-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Fetch the data from the backend
+        fetch('/api/countries/')
+            .then(response => response.json())
+            .then(data => {
+                // Create the pie chart
+                console.log(data)
+    
+                const width = 200;
+                const height = 200;
+                const radius = Math.min(width, height) / 2;
+    
+                const color = d3.scaleOrdinal(d3.schemeCategory10);
+    
+                const svg = d3.select('#chart-container')
+                    .append('svg')
+                    .attr('width', width)
+                    .attr('height', height)
+                    .style('display', 'flex')
+                    .style('justify-content', 'center')
+                    .style('align-items', 'center') // Center the chart vertically
+                    .append('g')
+                    .attr('transform', `translate(${width / 2}, ${height / 2})`);
+    
+                const pie = d3.pie()
+                    .value(d => d.total);
+    
+                const arc = d3.arc()
+                    .innerRadius(0)
+                    .outerRadius(radius);
+    
+                const arcs = svg.selectAll('arc')
+                    .data(pie(data))
+                    .enter()
+                    .append('g')
+                    .attr('class', 'arc');
+    
+                arcs.append('path')
+                    .attr('d', arc)
+                    .attr('fill', (d, i) => color(i))
+                    .on('mouseover', function(d) {
+                        // Show country name on hover
+                        d3.select(this)
+                            .transition()
+                            .duration(200)
+                            .attr('d', d3.arc().innerRadius(0).outerRadius(radius * 0.9));
+    
+                        const tooltip = d3.select('#chart-container')
+                            .append('div')
+                            .attr('class', 'tooltip')
+                            .text(d.data.country)
+                            .style('top', `${d3.event.pageY}px`)
+                            .style('left', `${d3.event.pageX}px`);
+    
+                        tooltip.classed('visible', true);
+                    })
+                    .on('mouseout', function() {
+                        // Hide the country name on mouseout
+                        d3.select(this)
+                            .transition()
+                            .duration(200)
+                            .attr('d', arc);
+    
+                        d3.selectAll('.tooltip')
+                            .classed('visible', false)
+                            .remove();
+                    });
+    
+            });
+    </script>
+    
+<script>
+        
+// Fetch the data from the backend
+fetch('/api/regions/')
+.then(response => response.json())
+.then(data => {
+    // Create the pie chart
+    const width = 200;
+    const height = 200;
+    const radius = Math.min(width, height) / 2;
+
+    const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+    const svg = d3.select('#chart-container-region')
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .append('g')
+        .attr('transform', `translate(${width / 2}, ${height / 2})`);
+
+    const pie = d3.pie()
+        .value(d => d.total);
+
+    const arc = d3.arc()
+        .innerRadius(0)
+        .outerRadius(radius);
+
+    const arcs = svg.selectAll('arc')
+        .data(pie(data))
+        .enter()
+        .append('g')
+        .attr('class', 'arc');
+
+    arcs.append('path')
+        .attr('d', arc)
+        .attr('fill', (d, i) => color(i))
+        .on('mouseover', function(d) {
+            // Show region name on hover
+            d3.select(this)
+                .transition()
+                .duration(200)
+                .attr('d', d3.arc().innerRadius(0).outerRadius(radius * 0.9));
+
+            const tooltip = d3.select('#chart-container')
+                .append('div')
+                .attr('class', 'tooltip')
+                .text(d.data.region)
+                .style('top', `${d3.event.pageY}px`)
+                .style('left', `${d3.event.pageX}px`);
+
+            tooltip.classed('visible', true);
+        })
+        .on('mouseout', function() {
+            // Hide the region name on mouseout
+            d3.select(this)
+                .transition()
+                .duration(200)
+                .attr('d', arc);
+
+            d3.selectAll('.tooltip')
+                .classed('visible', false)
+                .remove();
+
+                
+        });
+
+        {% comment %} // Create the legend container
+        const legendContainer = d3.select('#legend-container')
+            .append('div')
+            .attr('class', 'legend-container')
+            .style('position', 'absolute')
+            .style('top', '50%')
+            .style('right', '10px')
+            .style('transform', 'translateY(-50%)')
+            .style('display', 'grid')
+            .style('grid-template-columns', 'repeat(3, auto)'); // Set the number of columns here
+
+        // Create the legend items
+        const legendItems = legendContainer.selectAll('.legend-item')
+            .data(data)
+            .enter()
+            .append('div')
+            .attr('class', 'legend-item')
+            .style('display', 'flex')
+            .style('align-items', 'center')
+            .style('margin-right', '10px'); // Add spacing between legend items
+
+        // Add color indicators to the legend items
+        legendItems.append('div')
+            .attr('class', 'legend-color')
+            .style('background-color', (d, i) => color(i))
+            .style('width', '15px') // Adjust the width of the color indicator as needed
+            .style('height', '15px'); // Adjust the height of the color indicator as needed
+
+        // Add region names to the legend items
+        legendItems.append('div')
+            .attr('class', 'legend-text')
+            .text(d => d.region)
+            .style('font-size', '9px'); // Adjust the font size as needed {% endcomment %}
+
+        });
+</script>
+<script>
+        // Fetch data from Django backend
+        fetch('/api/relevance/')
+            .then(response => response.json())
+            .then(data => {
+                // Process data and create the chart
+                console.log(data);
+                createChart(data, "chart1");
+            })
+            .catch(error => console.log(error));
+    
+        // Fetch data from Django backend
+        fetch('/api/likelihood/')
+            .then(response => response.json())
+            .then(data => {
+                // Process data and create the chart
+                console.log(data);
+                createChart(data, "likelihoodChart");
+            })
+            .catch(error => console.log(error));
+    
+        // Function to create the bar chart
+        function createChart(data, chartId) {
+            // Define chart dimensions and margins
+            const width = 300;
+            const height = 200;
+            const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+            const barWidth = (width - margin.left - margin.right) / data.length - 10; // Adjust the spacing between bars
+    
+            // Create the chart SVG element
+            const svg = d3.select(`#${chartId}`)
+                .attr("width", width)
+                .attr("height", height);
+    
+            // Create the bars
+            svg.selectAll("rect")
+                .data(data)
+                .join("rect")
+                .attr("x", (d, i) => margin.left + (barWidth + 10) * i)
+                .attr("y", d => height - margin.bottom - ((height - margin.top - margin.bottom) * d.total / d3.max(data, d => d.total)))
+                .attr("width", barWidth)
+                .attr("height", d => (height - margin.top - margin.bottom) * d.total / d3.max(data, d => d.total))
+                .attr("fill", "steelblue");
+    
+            // Create y-axis labels
+            svg.selectAll("text.y-axis-label")
+                .data(data)
+                .join("text")
+                .attr("x", (d, i) => margin.left + (barWidth + 10) * i + barWidth / 2)
+                .attr("y", d => height - margin.bottom - ((height - margin.top - margin.bottom) * d.total / d3.max(data, d => d.total)) - 10)
+                .attr("dy", "0.35em")
+                .attr("text-anchor", "middle")
+                .attr("fill", "white")
+                .text(d => d.total);
+    
+            // Create x-axis labels
+            svg.selectAll("text.x-axis-label")
+                .data(data)
+                .join("text")
+                .attr("x", (d, i) => margin.left + (barWidth + 10) * i + barWidth / 2)
+                .attr("y", height - margin.bottom + 20)
+                .attr("dy", "0.1em")
+                .attr("text-anchor", "middle")
+                .attr("fill", "white")
+                .text(d => (chartId === "chart1") ? d.relevance : d.likelihood);
+
+    
+            // Create y-axis line
+            svg.append("line")
+                .attr("x1", margin.left)
+                .attr("y1", margin.top)
+                .attr("x2", margin.left)
+                .attr("y2", height - margin.bottom)
+                .attr("stroke", "white");
+    
+            // Create x-axis line
+            svg.append("line")
+                .attr("x1", margin.left)
+                .attr("y1", height - margin.bottom)
+                .attr("x2", width - margin.right)
+                .attr("y2", height - margin.bottom)
+                .attr("stroke", "white");
+    
+            // Create y-axis label
+            svg.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("x", -(height / 2))
+                .attr("y", margin.left - 40)
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .attr("fill", "white")
+                .text("Total");
+    
+            // Create x-axis label
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", height - margin.bottom + 23)
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .attr("fill", "white")
+                .text(chartId === "chart1" ? "Relevance" : "Likelihood");
+        }
+    </script> 
+       
+{% endblock content %}
